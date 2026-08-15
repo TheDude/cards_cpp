@@ -5,7 +5,6 @@ class Deck(ConanFile):
     options = {"unit_tests": [True, False]}
     default_options = {"unit_tests": False}
     settings = "os", "compiler", "build_type", "arch"
-    generators = "CMakeDeps", "CMakeToolchain"
 
     # in a real project, you would probably have real dependencies
     # this method is just here to document where those would go
@@ -20,6 +19,13 @@ class Deck(ConanFile):
 
     def layout(self):
         cmake_layout(self)
+
+    def generate(self):
+        tc = CMakeToolchain(self)
+        tc.variables["BUILD_TESTING"] = self.options.unit_tests
+        tc.generate()
+        deps = CMakeDeps(self)
+        deps.generate()
 
     def build(self):
         cmake = CMake(self)
